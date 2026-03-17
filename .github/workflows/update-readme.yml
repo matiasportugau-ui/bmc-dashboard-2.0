@@ -1,0 +1,178 @@
+name: Update README
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gather repository stats
+        id: stats
+        run: |
+          # Date
+          TODAY=$(date -u '+%Y-%m-%d')
+          echo "today=$TODAY" >> "$GITHUB_OUTPUT"
+
+          # Latest commit short SHA and message
+          COMMIT_SHA=$(git log -1 --format='%h')
+          COMMIT_MSG=$(git log -1 --format='%s' | head -c 72)
+          echo "commit_sha=$COMMIT_SHA" >> "$GITHUB_OUTPUT"
+          echo "commit_msg=$COMMIT_MSG" >> "$GITHUB_OUTPUT"
+
+          # Count source files (excluding .git, node_modules, .env*)
+          FILE_COUNT=$(find . \( -path './.git' -o -path './node_modules' \) -prune -o \
+            \( -name '*.js' -o -name '*.html' -o -name '*.css' -o -name '*.ts' \) -print \
+            | grep -v '.min.' | wc -l | tr -d ' ')
+          echo "file_count=$FILE_COUNT" >> "$GITHUB_OUTPUT"
+
+          # Count lines of code across those same files
+          LOC=$(find . \( -path './.git' -o -path './node_modules' \) -prune -o \
+            \( -name '*.js' -o -name '*.html' -o -name '*.css' -o -name '*.ts' \) -print \
+            | grep -v '.min.' | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}')
+          echo "loc=$LOC" >> "$GITHUB_OUTPUT"
+
+          # Individual file line counts (graceful if missing)
+          count_lines() {
+            local file="$1"
+            if [ -f "$file" ]; then
+              wc -l < "$file" | tr -d ' '
+            else
+              echo "N/A"
+            fi
+          }
+
+          BMC_ROUTE_LINES=$(count_lines "server/routes/bmcDashboard.js")
+          APP_JS_LINES=$(count_lines "docs/bmc-dashboard-modernization/dashboard/app.js")
+          INDEX_HTML_LINES=$(count_lines "docs/bmc-dashboard-modernization/dashboard/index.html")
+          STYLES_CSS_LINES=$(count_lines "docs/bmc-dashboard-modernization/dashboard/styles.css")
+
+          echo "bmc_route_lines=$BMC_ROUTE_LINES"   >> "$GITHUB_OUTPUT"
+          echo "app_js_lines=$APP_JS_LINES"         >> "$GITHUB_OUTPUT"
+          echo "index_html_lines=$INDEX_HTML_LINES" >> "$GITHUB_OUTPUT"
+          echo "styles_css_lines=$STYLES_CSS_LINES" >> "$GITHUB_OUTPUT"
+
+      - name: Update badges section in README
+        env:
+          TODAY: ${{ steps.stats.outputs.today }}
+          FILE_COUNT: ${{ steps.stats.outputs.file_count }}
+          LOC: ${{ steps.stats.outputs.loc }}
+        run: |
+          BADGE_DATE=$(echo "$TODAY" | tr '-' '_')
+
+          BADGES=$(cat <<EOF
+          ![Última actualización](https://img.shields.io/badge/última_actualización-${TODAY//-/--}-blue)
+          ![Archivos fuente](https://img.shields.io/badge/archivos_fuente-${FILE_COUNT}-green)
+          ![Líneas de código](https://img.shields.io/badge/líneas_de_código-${LOC}-orange)
+          EOF
+          )
+
+          # Replace content between AUTO-UPDATED:BADGES markers
+          python3 - <<'PYEOF'
+          import re, os
+
+          today       = os.environ['TODAY']
+          file_count  = os.environ['FILE_COUNT']
+          loc         = os.environ['LOC']
+
+          today_badge = today.replace('-', '--')
+
+          badges = (
+            f"![Última actualización](https://img.shields.io/badge/última_actualización-{today_badge}-blue)\n"
+            f"![Archivos fuente](https://img.shields.io/badge/archivos_fuente-{file_count}-green)\n"
+            f"![Líneas de código](https://img.shields.io/badge/líneas_de_código-{loc}-orange)"
+          )
+
+          with open('README.md', 'r', encoding='utf-8') as f:
+              content = f.read()
+
+          pattern = r'(<!-- AUTO-UPDATED:BADGES -->).*?(<!-- END:BADGES -->)'
+          replacement = f'<!-- AUTO-UPDATED:BADGES -->\n{badges}\n<!-- END:BADGES -->'
+          content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+
+          with open('README.md', 'w', encoding='utf-8') as f:
+              f.write(content)
+
+          print("✅ Badges section updated")
+          PYEOF
+
+      - name: Update stats table in README
+        env:
+          TODAY: ${{ steps.stats.outputs.today }}
+          COMMIT_SHA: ${{ steps.stats.outputs.commit_sha }}
+          COMMIT_MSG: ${{ steps.stats.outputs.commit_msg }}
+          FILE_COUNT: ${{ steps.stats.outputs.file_count }}
+          LOC: ${{ steps.stats.outputs.loc }}
+          BMC_ROUTE_LINES: ${{ steps.stats.outputs.bmc_route_lines }}
+          APP_JS_LINES: ${{ steps.stats.outputs.app_js_lines }}
+          INDEX_HTML_LINES: ${{ steps.stats.outputs.index_html_lines }}
+          STYLES_CSS_LINES: ${{ steps.stats.outputs.styles_css_lines }}
+        run: |
+          python3 - <<'PYEOF'
+          import re, os
+
+          today            = os.environ['TODAY']
+          commit_sha       = os.environ['COMMIT_SHA']
+          commit_msg       = os.environ['COMMIT_MSG']
+          file_count       = os.environ['FILE_COUNT']
+          loc              = os.environ['LOC']
+          bmc_route_lines  = os.environ['BMC_ROUTE_LINES']
+          app_js_lines     = os.environ['APP_JS_LINES']
+          index_html_lines = os.environ['INDEX_HTML_LINES']
+          styles_css_lines = os.environ['STYLES_CSS_LINES']
+
+          stats_table = f"""\
+          | Métrica | Valor |
+          |---------|-------|
+          | Última actualización | {today} |
+          | Commit más reciente | `{commit_sha}` — {commit_msg} |
+          | Archivos fuente | {file_count} |
+          | Líneas de código (aprox.) | {loc} |
+          | Backend (rutas API) | {bmc_route_lines} líneas |
+          | Frontend JS | {app_js_lines} líneas |
+          | Frontend HTML | {index_html_lines} líneas |
+          | Frontend CSS | {styles_css_lines} líneas |"""
+
+          # Remove leading spaces from heredoc indentation
+          stats_table = '\n'.join(line.strip() for line in stats_table.splitlines())
+
+          with open('README.md', 'r', encoding='utf-8') as f:
+              content = f.read()
+
+          pattern = r'(<!-- AUTO-UPDATED:STATS -->).*?(<!-- END:STATS -->)'
+          replacement = f'<!-- AUTO-UPDATED:STATS -->\n{stats_table}\n<!-- END:STATS -->'
+          content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+
+          with open('README.md', 'w', encoding='utf-8') as f:
+              f.write(content)
+
+          print("✅ Stats table updated")
+          PYEOF
+
+      - name: Commit updated README
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add README.md
+
+          if git diff --cached --quiet; then
+            echo "ℹ️  README already up to date — nothing to commit"
+          else
+            git commit -m "docs: auto-update README stats [${{ steps.stats.outputs.today }}]"
+            git push
+            echo "✅ README updated and pushed"
+          fi
