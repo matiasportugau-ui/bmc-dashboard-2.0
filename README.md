@@ -4,7 +4,7 @@
 
 <!-- AUTO-UPDATED:BADGES -->
 ![Última actualización](https://img.shields.io/badge/última_actualización-2026--03--17-blue)
-![Archivos fuente](https://img.shields.io/badge/archivos_fuente-6-green)
+![Archivos fuente](https://img.shields.io/badge/archivos_fuente-4-green)
 ![Líneas de código](https://img.shields.io/badge/líneas_de_código-4060-orange)
 <!-- END:BADGES -->
 
@@ -429,13 +429,13 @@ ngrok http 3001
 | Métrica | Valor |
 |---------|-------|
 | Última actualización | 2026-03-17 |
-| Commit más reciente | *(ver historial)* |
-| Archivos fuente | 6 |
+| Commit más reciente | `b7f0cff` — Merge pull request #1 from matiasportugau-ui/copilot/create-comprehensiv |
+| Archivos fuente | 4 |
 | Líneas de código (aprox.) | 4060 |
-| Backend (rutas API) | 1 365 líneas |
-| Frontend JS | 1 239 líneas |
+| Backend (rutas API) | 1365 líneas |
+| Frontend JS | 1239 líneas |
 | Frontend HTML | 357 líneas |
-| Frontend CSS | 1 099 líneas |
+| Frontend CSS | 1099 líneas |
 <!-- END:STATS -->
 
 ---
