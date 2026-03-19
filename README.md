@@ -3,9 +3,9 @@
 > **Dashboard operativo y financiero para BMC Uruguay** — integra Google Sheets con una interfaz web moderna para gestión de operaciones, finanzas, ventas e inventario.
 
 <!-- AUTO-UPDATED:BADGES -->
-![Última actualización](https://img.shields.io/badge/última_actualización-2026--03--17-blue)
-![Archivos fuente](https://img.shields.io/badge/archivos_fuente-4-green)
-![Líneas de código](https://img.shields.io/badge/líneas_de_código-4060-orange)
+![Última actualización](https://img.shields.io/badge/última_actualización-2026--03--19-blue)
+![Archivos fuente](https://img.shields.io/badge/archivos_fuente-10-green)
+![Líneas de código](https://img.shields.io/badge/líneas_de_código-5546-orange)
 <!-- END:BADGES -->
 
 ---
@@ -428,14 +428,14 @@ ngrok http 3001
 <!-- AUTO-UPDATED:STATS -->
 | Métrica | Valor |
 |---------|-------|
-| Última actualización | 2026-03-17 |
-| Commit más reciente | `b7f0cff` — Merge pull request #1 from matiasportugau-ui/copilot/create-comprehensiv |
-| Archivos fuente | 4 |
-| Líneas de código (aprox.) | 4060 |
-| Backend (rutas API) | 1365 líneas |
+| Última actualización | 2026-03-19 |
+| Commit más reciente | `5f4337a` — docs: sync run16 — DASHBOARD-INTERFACE-MAP, dependencies, service-map, |
+| Archivos fuente | 10 |
+| Líneas de código (aprox.) | 5546 |
+| Backend (rutas API) | 1439 líneas |
 | Frontend JS | 1239 líneas |
-| Frontend HTML | 357 líneas |
-| Frontend CSS | 1099 líneas |
+| Frontend HTML | 362 líneas |
+| Frontend CSS | 1125 líneas |
 <!-- END:STATS -->
 
 ---
