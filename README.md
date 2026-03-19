@@ -429,7 +429,7 @@ ngrok http 3001
 | Métrica | Valor |
 |---------|-------|
 | Última actualización | 2026-03-19 |
-| Commit más reciente | `5f4337a` — docs: sync run16 — DASHBOARD-INTERFACE-MAP, dependencies, service-map, |
+| Commit más reciente | `ff62cfe` — chore: sync deploy artifacts (vercel, Docker, Cloud Build) — run 18 |
 | Archivos fuente | 10 |
 | Líneas de código (aprox.) | 5546 |
 | Backend (rutas API) | 1439 líneas |
