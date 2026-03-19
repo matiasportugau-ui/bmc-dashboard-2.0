@@ -1,0 +1,19 @@
+node_modules
+dist
+.git
+.gitignore
+.github
+.env
+.env.*
+.ml-tokens*
+npm-debug.log
+public
+tests
+# docs excluded except dashboard (Dockerfile needs docs/bmc-dashboard-modernization/dashboard)
+docs/*
+!docs/bmc-dashboard-modernization
+docs/bmc-dashboard-modernization/*
+!docs/bmc-dashboard-modernization/dashboard
+*.md
+!package.json
+!package-lock.json
