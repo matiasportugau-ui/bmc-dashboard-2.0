@@ -17,7 +17,9 @@
 | **sheets-api-server (3849)** | Backend standalone | http://localhost:3849 | Dashboard + API propio | — | Shell |
 | **legacyQuote** | API | /api/legacy/* | Quote legacy | — | Cotizaciones |
 | **calc** | API | /api/calc/* | Cálculos | — | Cotizaciones |
+| **actualizar-precios-calculadora** | API | GET /api/actualizar-precios-calculadora | MATRIZ Costos 2026 → CSV | — | Cotizaciones |
 | **Shopify** | API | /api/shopify/*, /webhooks/shopify | OAuth, webhooks | — | Integraciones |
+| **Apps Script** | Automation | Code.gs, DialogEntregas, triggers | doGet/doPost, Sheets append, cron | — | Sheets Structure |
 
 ---
 
@@ -33,7 +35,8 @@
 | /api/metas-ventas | GET | Metas_Ventas | Array metas |
 | /api/audit | GET | AUDIT_LOG | Array audit |
 | /api/marcar-entregado | POST | Master_Cotizaciones → Ventas realizadas | { ok, cotizacionId } |
-| /api/kpi-report | GET | kpi-financiero, proximas-entregas, stock-kpi, metas-ventas, ventas | totalPendiente, estaSemana, entregasEstaSemana, bajoStock, equilibrio |
+| /api/kpi-report | GET | kpi-financiero, proximas-entregas, stock-kpi, metas-ventas, ventas | totalPendiente, estaSemana, entregasEstaSemana, bajoStock, equilibrio ✓ |
+| Admin_Cotizaciones (tab) | — | Script npm run integrate-admin-cotizaciones | Origen: 2.0 Admin Cotizaciones (1Ie0KCpg...); destino: BMC crm_automatizado. No expuesta por API aún. |
 
 ---
 
@@ -53,6 +56,7 @@
 | From | To | Integration | Status |
 |------|-----|-------------|--------|
 | Shell nav | Cotizaciones | Link a 5173 | OK |
+| Dashboard #invoque | Panelin Evolution | Link a localhost:3847 | OK |
 | Shell | Operaciones / Finanzas | Anchors #operaciones, #finanzas | OK |
 | bmcDashboard | Sheets | BMC_SHEET_ID, GOOGLE_APPLICATION_CREDENTIALS | OK (verificar .env) |
 | Operaciones | Finanzas | Shared Sheets, UI blocks | OK |
@@ -61,5 +65,5 @@
 
 ---
 
-**Última actualización:** 2026-03-16 (run7: date corrected; /api/ventas POST, /api/pagos, /api/cotizaciones PUSH documented)
+**Última actualización:** 2026-03-19 (run17; deploy calc prep)
 **Handoff:** Usar con dependencies.md para validar integración end-to-end.
